@@ -1,2 +1,1 @@
-train/node_modules/@tensorflow/tfjs-node-gpu/deps/lib/libtensorflow.1.14.0.dylib filter=lfs diff=lfs merge=lfs -text
 *train/node_modules/@tensorflow/tfjs-node-gpu/deps/lib/libtensorflow.1.14.0.dylib filter=lfs diff=lfs merge=lfs -text
