@@ -1,35 +1,43 @@
 // two error msgs and enter selected img again resets result img
-
-let brokenImg;
-
-$("#enter-button").click(function () {
-  brokenImg = false;
-  $("#selected-image-container").empty();
-
-  let dataURL = $("#img-url").val();
-  $("#selected-image-container").append(
-    "<img id='selected-image' src='" +
-      dataURL +
-      "' class='ml-3' crossorigin='anonymous' alt='' onerror='sendError()'>"
-  );
-  $("#result-image-container").empty();
-});
-
-function sendError() {
-  brokenImg = true;
-  alert("The image could not be loaded.");
-}
+// click predict again when theres a img
 
 let model;
 $(document).ready(async function () {
   $(".progress-bar").show();
+  $("#loading-msg").hide();
   console.log("Loading model...");
   model = await tf.loadGraphModel("model/model.json");
   console.log("Model loaded.");
   $(".progress-bar").hide();
 });
 
-async function getPredictedImg() {
+let brokenImg;
+let newImg;
+
+function sendUrlError() {
+  brokenImg = true;
+  alert("Invalid URL.");
+}
+
+function sendImgError() {
+  alert("Enter a new image url for prediction.");
+}
+
+$("#enter-button").click(function () {
+  brokenImg = false;
+  newImg = true;
+  $("#selected-image-container").empty();
+
+  let dataURL = $("#img-url").val();
+  $("#selected-image-container").append(
+    "<img id='selected-image' src='" +
+      dataURL +
+      "' class='ml-3' crossorigin='anonymous' alt='' onerror='sendUrlError()'>"
+  );
+  $("#result-image-container").empty();
+});
+
+async function analyzeImg() {
   let image = $("#selected-image").get(0);
   // Pre-process the image
   let tensor = tf.browser
@@ -73,11 +81,19 @@ async function getPredictedImg() {
         });
     },
   });
+
+  $("#loading-msg").hide();
 }
+
 $("#predict-button").click(function () {
-  if (!brokenImg) {
-    getPredictedImg();
+  if (!brokenImg && newImg === true) {
+    // startPredict(analyzeImg);
+    newImg = false;
+    $("#loading-msg").show();
+    setTimeout(() => {
+      analyzeImg();
+    }, 50);
   } else {
-    sendError();
+    sendImgError();
   }
 });
