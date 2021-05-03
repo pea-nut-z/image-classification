@@ -2,79 +2,49 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+    <link rel="icon" href="peanut.ico" />
     <title>Image Classification</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta
       name="description"
       content="Use the power of Machine Learning to diagnose TB from chest x-rays."
     />
-
     <link
       rel="stylesheet"
       href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
       integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
       crossorigin="anonymous"
     />
-    <style>
-      body {
-        min-height: 50rem;
-        min-width: 50rem;
-        padding-top: 4.5rem;
-      }
-      img {
-        width: 15rem;
-        height: 20rem;
-      }
-      input {
-        line-height: 2em;
-      }
-      /* .bd-placeholder-img {
-        font-size: 0.1rem;
-        text-anchor: middle;
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
-      } */
-
-      /* @media (min-width: 50rem) {
-        .bd-placeholder-img-lg {
-          font-size: 3.5rem;
-        }
-      } */
-    </style>
+    <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-      <a class="navbar-brand" href="/index.html">Image Classification</a>
+    <nav class="navbar fixed-top">
+      <a class="navbar-brand ml-3" href="/index.html">⭐ Image Classification ⭐</a>
     </nav>
-
-    <main role="main" class="container mt-5">
-      <div class="row">
-        <div class="col-12">
-          <div class="progress progress-bar progress-bar-striped progress-bar-animated mb-2">
-            Loading Model
-          </div>
+    <main role="main" class="container">
+      <div id="progress-bar-container">
+        <div id="progress-bar">
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
         </div>
+        <h6 id="load-msg"></h6>
+        <h6 id="error-msg"></h6>
       </div>
-      <div class="row">
-        <div class="col-6 d-flex align-items-center">
-          <input id="img-url" class="ml-3" type="text" size="20" />
-          <button id="enter-button" class="btn btn-primary ml-3">Enter</button>
-        </div>
-        <div class="col-6">
-          <button id="predict-button" class="btn btn-primary float-right">Predict</button>
-        </div>
+      <div id="btn-input-container">
+        <input id="img-input" type="text" />
+        <button id="enter-button">Enter</button>
+        <button id="predict-button">Predict</button>
       </div>
       <hr />
       <div class="row">
         <div class="col-6">
-          <h2 class="ml-3">Image</h2>
+          <h4 class="ml-3 mt-3">Image</h4>
           <div id="selected-image-container" class="mt-5"></div>
         </div>
         <div class="col-6">
-          <h2 class="ml-3">Predictions</h2>
-          <h5 id="loading-msg" class="ml-3">loading...</h5>
+          <h4 class="ml-3 mt-3">Predictions</h4>
           <div id="prediction-probability" class="ml-3"></div>
           <div id="result-image-container" class="mt-3"></div>
         </div>
