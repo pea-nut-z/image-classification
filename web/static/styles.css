@@ -1,29 +1,148 @@
+:root {
+  --desktop: 1200px;
+  --laptop: 1024px;
+  --tablet: 768px;
+  --phone: 480px;
+}
+
 body {
   min-height: 50rem;
   min-width: 50rem;
-  padding-top: 4.5rem;
+  padding: 7rem;
   font-family: Monaco;
   background-color: RGB(252, 242, 212);
 }
-#selected-image,
-#predicted-image {
-  width: 15rem;
-  height: 20rem;
-  border: 1px solid black;
-  border-radius: 5px;
+
+@media screen and (max-width: 970px) {
+  #title-msg-container {
+    flex-direction: column !important;
+  }
+  #msg-bubble-container {
+    margin-top: 20px !important;
+  }
+  .subtitle {
+    font-size: 18px !important;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  #btn-input-container {
+    flex-direction: column !important;
+  }
+  #submit-buttons {
+    /* width: 100%; */
+    justify-content: space-between !important;
+    margin-top: 18px;
+    /* background-color: pink; */
+  }
+  #enter-button,
+  #predict-button {
+    width: 48% !important;
+    height: 30px !important;
+    margin: 0 !important;
+  }
+}
+
+#title-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  font-size: 30px;
+  position: relative;
+  top: 50%;
+  font-family: Courier New;
+  font-weight: bold;
+}
+#title {
+  padding-left: 22px;
+}
+#subtitle-outter-container {
+  display: flex;
+  flex-direction: row;
+  /* background-color: pink; */
+}
+.subtitle-inner-container {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  /* align-content: space-between; */
+  /* background-color: yellow; */
+}
+.subtitle {
+  font-size: 22px;
+  /* background-color: green; */
+}
+#bag {
+  width: 7%;
+}
+a,
+a:visited,
+a:hover,
+a:active {
+  text-decoration: none;
+  color: black;
+}
+#title-msg-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  /* background-color: pink; */
+}
+#msg-bubble-container {
+  position: relative;
+  top: -7px;
+  right: 7%;
+  /* background-color: pink; */
+}
+#message-bubble {
+  position: relative;
+  z-index: -1;
+  width: 250px;
+  height: 250px;
+}
+#welcome-gif {
+  position: absolute;
+  height: 43%;
+  width: 49%;
+  top: 25px;
+  left: 64px;
+}
+#note {
+  position: absolute;
+  width: 183px;
+  top: 29%;
+  left: 17%;
+  /* background-color: yellow; */
+}
+
+#progress-container {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 200px;
+  top: 12%;
+  left: 9%;
 }
 #img-input {
-  line-height: 2em;
-  margin-left: 15px;
-  width: 80%;
+  line-height: 32px;
+  width: 100%;
   border: 1px solid black;
   border-radius: 5px;
-  background-color: rgb(234, 187, 177);
+  background-color: rgb(215, 250, 242);
 }
 #img-input:focus {
-  background-color: rgb(234, 187, 177);
+  background-color: rgb(215, 250, 242);
   outline: none !important;
-  box-shadow: 0 0 10px #719ece;
+  box-shadow: 0 0 10px rgb(129, 212, 208);
+}
+::placeholder {
+  padding-left: 20px;
+}
+#submit-buttons {
+  display: flex;
+  flex-direction: row;
 }
 #enter-button,
 #predict-button {
@@ -36,45 +155,30 @@ body {
 }
 button:focus {
   outline: none !important;
+  box-shadow: 0 0 10px rgb(129, 212, 208);
 }
 #btn-input-container {
   display: flex;
   flex-direction: row;
 }
-nav {
-  background-color: rgb(234, 187, 177);
-  border-bottom: 1px solid black;
+#selected-image,
+#predicted-image {
+  width: 240px;
+  height: 320px;
+  border: 1px solid black;
+  border-radius: 5px;
 }
-a,
-a:visited,
-a:hover,
-a:active {
-  text-decoration: none;
-  color: black;
-  animation: link 2s ease-in-out alternate 4;
+#selected-image {
+  margin-top: 34px;
 }
-#progress-bar-container {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  height: 150px;
+#predicted-image {
+  margin-top: 10px;
 }
-
-@keyframes link {
-  from {
-    transform: scale(1);
-  }
-  to {
-    transform: scale(1.1);
-  }
-}
-
 .lds-ellipsis {
   display: inline-block;
   position: relative;
-  width: 80px;
-  height: 80px;
+  width: 60px;
+  height: 60px;
 }
 .lds-ellipsis div {
   position: absolute;
@@ -82,7 +186,7 @@ a:active {
   width: 13px;
   height: 13px;
   border-radius: 50%;
-  background: #fff;
+  background: rgb(245, 186, 238);
   animation-timing-function: cubic-bezier(0, 1, 1, 0);
 }
 .lds-ellipsis div:nth-child(1) {
