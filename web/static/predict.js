@@ -1,95 +1,106 @@
 // enter selected img again (resets result img)
 // click predict again when theres a img (retun nothing happens)
-
-function toggleLoading(item) {
-  $("#note").empty();
+//load model -> show welcome ->
+function toggleLoading() {
+  $("#res-display").empty();
+  $("#welcome-gif-container").empty();
   if ($("#progress-msg").is(":empty")) {
-    item === "model"
-      ? $("#progress-msg").html("Loading model...")
-      : $("#progress-msg").html("Loading...");
+    if (firstMounted) {
+      $("#progress-msg").html("Loading model...");
+      firstMounted = false;
+    } else {
+      $("#progress-msg").html("Loading...");
+    }
   } else {
     $("#progress-msg").empty();
   }
   $("#progress-dots").toggleClass("lds-ellipsis");
 }
 
-function sendNote(note) {
-  $("#note").empty();
+function respond(res) {
+  $("#res-display").empty();
+  $("#welcome-gif-container").empty();
   let msg;
-  if (note === "upload-complete") msg = "Upload complete...\nClick predict!";
-  if (note === "predict-complete") msg = "Stop reading.....\nSee predictions!";
-  if (note === "predict-error") msg = "No similar items were found.";
+  if (res === "upload-complete") msg = "Click predict!";
+  if (res === "predict-complete") msg = "See predictions!";
+  if (res === "predict-error") msg = "No similar items were found.";
   // click predict when there's a broken img
-  if (note === "broken-url") msg = "Invalid image URL.";
+  if (res === "broken-url") msg = "Invalid image URL.";
   // newImg = false && brokenImg = true (click predict before enter /empty url / broken img)
-  if (note === "no-upload-image") msg = "Enter an image URL.";
+  if (res === "no-upload-image") msg = "Enter an image URL.";
   // newImg = false && brokenImg = false (click predict twice)
-  if (note === "double-clicked-predict") msg = "Enter a new URL.";
-  $("#note").html(msg);
+  if (res === "broken-file") msg = "Invalid image format.";
+  if (res === "double-clicked-predict") msg = "Enter a new URL.";
+  $("#res-display").html(msg);
 }
 
-function uploadImage(source) {
-  $("#result-image-container").empty();
-  $("#selected-image-container").empty();
-  $("#prediction-probability").empty();
-
-  let path;
-
-  if (source === "url") {
-    path = $("#img-input").val();
-  }
-  if (source === "local") {
-    let reader = new FileReader();
-    reader.onload = function () {
-      path = reader.result;
-    };
-    let file = $("#upload-button").prop("files")[0];
-    reader.readAsDataURL(file);
-  }
-
-  $("#selected-image-container").append(
-    "<img id='selected-image' src='" + path + "' class='ml-3' crossorigin='anonymous' alt=''>"
-  );
-
-  toggleLoading();
-  $("#selected-image").on("load", function () {
-    sendNote("upload-complete");
-    brokenImg = false;
-    newImg = true;
+$(function () {
+  $("#file-selector").change(function (event) {
+    toggleLoading();
+    $("#predicted-images-container").empty();
+    $("#selected-image-container").empty();
+    $("#prediction-probability").empty();
+    const path = URL.createObjectURL(event.target.files[0]);
+    $("#selected-image-container").append(
+      `<img id="selected-image" src="${path}" crossorigin="anonymous" alt="">`
+    );
+    toggleLoading();
+    $("#selected-image").on("load", function () {
+      respond("upload-complete");
+      brokenImg = false;
+      newImg = true;
+    });
+    $("#selected-image").on("error", function () {
+      respond("broken-file");
+    });
   });
+});
 
-  $("#selected-image").on("error", function () {
-    sendNote("broken-url");
-  });
-}
-$("#upload-button").click(function () {});
-
+let firstMounted = true;
+let brokenImg = true;
+let newImg = false;
 let model;
+
+// FIRST MOUNTED
 $(document).ready(async function () {
-  toggleLoading("model");
+  toggleLoading();
   model = await tf.loadGraphModel("model/model.json");
   toggleLoading();
   $("#welcome-gif-container").append(
     '<img id="welcome-gif" src="welcome.gif" crossorigin="anonymous" alt="" >'
   );
-  sendNotification("enterInput");
 });
 
-let firstVisit = true;
-let brokenImg = true;
-let newImg = false;
-$("#enter-button").click(function () {
-  if (firstVisit) {
-    firstVisit = false;
-    $("#welcome-gif-container").empty();
-  }
+//ENTER BTN
+$("#enter-btn").click(function () {
   toggleLoading();
-  $("#enter-button").html("👌");
+
+  $("#enter-btn").html("👌");
   setTimeout(() => {
-    $("#enter-button").html("Enter");
+    $("#enter-btn").html("Enter");
   }, 1000);
+
+  $("#predicted-images-container").empty();
+  $("#selected-image-container").empty();
+  $("#prediction-probability").empty();
+
+  let path = $("#url-input").val();
+  $("#selected-image-container").append(
+    `<img id="selected-image" src="${path}" crossorigin="anonymous" alt="">`
+  );
+  toggleLoading();
+  $("#selected-image").on("load", function () {
+    respond("upload-complete");
+    brokenImg = false;
+    newImg = true;
+  });
+
+  $("#selected-image").on("error", function () {
+    respond("broken-url");
+  });
 });
 
+// PREDICT FUNC
 async function analyzeImg() {
   try {
     let image = $("#selected-image").get(0);
@@ -127,7 +138,7 @@ async function analyzeImg() {
           .find("a")
           .attr("href", function (i, val) {
             if (val.match(/\.(jpe?g)$/)) {
-              $("#result-image-container").append(
+              $("#predicted-images-container").append(
                 `<img id="predicted-image" src="${val}" class='ml-3' crossorigin='anonymous' alt='' >`
               );
             }
@@ -136,28 +147,28 @@ async function analyzeImg() {
     });
     newImg = false;
     toggleLoading();
-    sendNote("predict-complete");
+    respond("predict-complete");
   } catch {
     toggleLoading();
-    sendNote("predict-error");
+    respond("predict-error");
   }
 }
 
-$("#predict-button").click(function () {
+// PREDICT BTN
+$("#predict-btn").click(function () {
   if (!brokenImg && newImg) {
-    $("#predict-button").html("👌");
+    $("#predict-btn").html("👌");
     toggleLoading();
-
     setTimeout(() => {
-      $("#predict-button").html("Predict");
+      $("#predict-btn").html("Predict");
     }, 500);
 
     setTimeout(() => {
       analyzeImg();
     }, 50);
   } else if (!newImg && !brokenImg) {
-    sendNote("double-clicked-predict");
+    respond("double-clicked-predict");
   } else {
-    sendNote("no-upload-image");
+    respond("no-upload-image");
   }
 });

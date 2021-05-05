@@ -1,8 +1,62 @@
-:root {
+/* 
   --desktop: 1200px;
   --laptop: 1024px;
   --tablet: 768px;
   --phone: 480px;
+   */
+
+@media screen and (max-width: 1200px) {
+  #upload-btn {
+    font-size: 14px !important;
+  }
+}
+@media screen and (max-width: 1024px) {
+  #upload-btn {
+    font-size: 11.5px !important;
+  }
+  #predicted-image {
+    width: 126px !important;
+    height: 176px !important;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  #title-msg-container {
+    flex-direction: column !important;
+  }
+  #msg-bubble-container {
+    margin-top: 20px !important;
+  }
+  #btns-input-container {
+    justify-content: space-between !important;
+    flex-direction: column !important;
+    height: 85px !important;
+  }
+  #upload-btn-input-container {
+    width: 100% !important;
+  }
+  #upload-btn {
+    font-size: 13px !important;
+    width: 30% !important;
+  }
+  #url-input {
+    margin-left: 2% !important;
+  }
+  #submit-btns-container {
+    width: 100% !important;
+    justify-content: space-between;
+  }
+  .btn {
+    width: 49% !important;
+    margin-left: 0 !important;
+  }
+  .subtitle {
+    font-size: 18px !important;
+  }
+  #predicted-image {
+    width: 89px !important;
+    height: 139px !important;
+  }
 }
 
 body {
@@ -13,36 +67,7 @@ body {
   background-color: RGB(252, 242, 212);
 }
 
-@media screen and (max-width: 970px) {
-  #title-msg-container {
-    flex-direction: column !important;
-  }
-  #msg-bubble-container {
-    margin-top: 20px !important;
-  }
-  .subtitle {
-    font-size: 18px !important;
-  }
-}
-
-@media screen and (max-width: 480px) {
-  #btn-input-container {
-    flex-direction: column !important;
-  }
-  #submit-buttons {
-    /* width: 100%; */
-    justify-content: space-between !important;
-    margin-top: 18px;
-    /* background-color: pink; */
-  }
-  #enter-button,
-  #predict-button {
-    width: 48% !important;
-    height: 30px !important;
-    margin: 0 !important;
-  }
-}
-
+/* TITLE & BUBBLE */
 #title-container {
   display: flex;
   flex-direction: row;
@@ -59,18 +84,14 @@ body {
 #subtitle-outter-container {
   display: flex;
   flex-direction: row;
-  /* background-color: pink; */
 }
 .subtitle-inner-container {
   width: 50%;
   display: flex;
   flex-direction: column;
-  /* align-content: space-between; */
-  /* background-color: yellow; */
 }
 .subtitle {
   font-size: 22px;
-  /* background-color: green; */
 }
 #bag {
   width: 7%;
@@ -87,13 +108,11 @@ a:active {
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  /* background-color: pink; */
 }
 #msg-bubble-container {
   position: relative;
   top: -7px;
   right: 7%;
-  /* background-color: pink; */
 }
 #message-bubble {
   position: relative;
@@ -108,12 +127,11 @@ a:active {
   top: 25px;
   left: 64px;
 }
-#note {
+#res-display {
   position: absolute;
   width: 183px;
   top: 29%;
-  left: 17%;
-  /* background-color: yellow; */
+  left: 20%;
 }
 
 #progress-container {
@@ -125,46 +143,83 @@ a:active {
   top: 12%;
   left: 9%;
 }
-#img-input {
+/* UPLOAD BUTTON & INPUT */
+#btns-input-container {
+  display: flex;
+  flex-direction: row;
+  height: 32px;
+  width: 100%;
+}
+#upload-btn-input-container {
+  display: flex;
+  flex-direction: row;
+  width: 75%;
+}
+#file-selector {
+  display: none;
+}
+#upload-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 25%;
+  height: 100%;
+  border-radius: 5px;
+  border: 1px solid black;
+  background-color: rgb(196, 94, 255);
+  color: white;
+  cursor: pointer;
+}
+#url-input {
   line-height: 32px;
+  margin-left: 20px;
   width: 100%;
   border: 1px solid black;
   border-radius: 5px;
   background-color: rgb(215, 250, 242);
+  text-indent: 10px;
 }
-#img-input:focus {
+#url-input:focus {
   background-color: rgb(215, 250, 242);
   outline: none !important;
   box-shadow: 0 0 10px rgb(129, 212, 208);
 }
 ::placeholder {
-  padding-left: 20px;
+  padding-left: 10px;
 }
-#submit-buttons {
+
+/* ENTER & PREDICT BUTTONS */
+#submit-btns-container {
   display: flex;
   flex-direction: row;
+  width: 25%;
 }
-#enter-button,
-#predict-button {
-  border: 1px solid rgb(234, 111, 86);
+
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid black;
   border-radius: 5px;
-  border-color: black;
   background-color: white;
-  width: 80px;
+  width: 50%;
+  height: 100%;
   margin-left: 20px;
 }
-button:focus {
+.btn:focus {
   outline: none !important;
   box-shadow: 0 0 10px rgb(129, 212, 208);
 }
-#btn-input-container {
-  display: flex;
-  flex-direction: row;
-}
-#selected-image,
-#predicted-image {
+#selected-image {
   width: 240px;
   height: 320px;
+  border: 1px solid black;
+  border-radius: 5px;
+}
+
+#predicted-image {
+  width: 150px;
+  height: 204px;
   border: 1px solid black;
   border-radius: 5px;
 }
