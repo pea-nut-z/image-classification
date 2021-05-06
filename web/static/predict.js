@@ -1,13 +1,17 @@
 // enter selected img again (resets result img)
 // click predict again when theres a img (retun nothing happens)
+// space within url input / space in the start and end of url / space only
+// cancel file input when there's a selected image
+// clear alll data when selected new image
+
 //load model -> show welcome ->
 function toggleLoading() {
-  $("#res-display").empty();
+  $("#res-msg").empty();
   $("#welcome-gif-container").empty();
   if ($("#progress-msg").is(":empty")) {
-    if (firstMounted) {
+    if (firstLoaded) {
       $("#progress-msg").html("Loading model...");
-      firstMounted = false;
+      firstLoaded = false;
     } else {
       $("#progress-msg").html("Loading...");
     }
@@ -18,32 +22,64 @@ function toggleLoading() {
 }
 
 function respond(res) {
-  $("#res-display").empty();
+  $("#res-msg").empty();
   $("#welcome-gif-container").empty();
   let msg;
   if (res === "upload-complete") msg = "Click predict!";
   if (res === "predict-complete") msg = "See predictions!";
   if (res === "predict-error") msg = "No similar items were found.";
   // click predict when there's a broken img
-  if (res === "broken-url") msg = "Invalid image URL.";
+  if (res === "broken-url") msg = "Invalid or no access to image URL. Try again!";
   // newImg = false && brokenImg = true (click predict before enter /empty url / broken img)
-  if (res === "no-upload-image") msg = "Enter an image URL.";
+  if (res === "no-selected-image") msg = "Upload an image first...";
   // newImg = false && brokenImg = false (click predict twice)
   if (res === "broken-file") msg = "Invalid image format.";
-  if (res === "double-clicked-predict") msg = "Enter a new URL.";
-  $("#res-display").html(msg);
+  if (res === "double-clicked-predict") msg = "You've clicked predict again!";
+  $("#res-msg").html(msg);
 }
 
+function clearAllData() {
+  $("#selected-image-container").empty();
+  $("#predicted-images-container").empty();
+  $("#percentage-accuracy").empty();
+  $(".key").addClass("hide");
+  $("#name").empty();
+  $("#style").empty();
+  $("#release").empty();
+}
+
+let firstLoaded = true;
+let brokenImg = true;
+let newImg = false;
+let model;
+
+// FIRST LOADED
+$(document).ready(async function () {
+  $("#enter-btn").prop("disabled", true);
+  $("#predict-btn").prop("disabled", true);
+  toggleLoading();
+  model = await tf.loadGraphModel("model/model.json");
+  toggleLoading();
+  $("#welcome-gif-container").append(
+    '<img id="welcome-gif" src="images/welcome.gif" crossorigin="anonymous" alt="" >'
+  );
+  // respond("predict-error");
+});
+
+// IMAGE FILE UPLOAD
 $(function () {
   $("#file-selector").change(function (event) {
-    toggleLoading();
-    $("#predicted-images-container").empty();
-    $("#selected-image-container").empty();
-    $("#prediction-probability").empty();
-    const path = URL.createObjectURL(event.target.files[0]);
-    $("#selected-image-container").append(
-      `<img id="selected-image" src="${path}" crossorigin="anonymous" alt="">`
-    );
+    let selected = this.files.length;
+    if (selected) {
+      toggleLoading();
+      clearAllData();
+      const path = URL.createObjectURL(event.target.files[0]);
+      $("#selected-image-container").append(
+        `<img id="selected-image" src="${path}" crossorigin="anonymous" alt="">`
+      );
+    } else {
+      return;
+    }
     toggleLoading();
     $("#selected-image").on("load", function () {
       respond("upload-complete");
@@ -56,35 +92,40 @@ $(function () {
   });
 });
 
-let firstMounted = true;
-let brokenImg = true;
-let newImg = false;
-let model;
-
-// FIRST MOUNTED
-$(document).ready(async function () {
-  toggleLoading();
-  model = await tf.loadGraphModel("model/model.json");
-  toggleLoading();
-  $("#welcome-gif-container").append(
-    '<img id="welcome-gif" src="welcome.gif" crossorigin="anonymous" alt="" >'
-  );
+// LISTEN TO INPUT
+$("#url-input").on("input", function () {
+  let input = $("#url-input").val();
+  if (input) {
+    $("#enter-btn").prop("disabled", false);
+  } else {
+    $("#enter-btn").prop("disabled", true);
+  }
 });
 
-//ENTER BTN
+// LISTEN TO IMAGE
+$("#selected-image-container").bind("DOMSubtreeModified", function () {
+  let image = $("#selected-image-container").is(":empty");
+  if (!image) {
+    $("#predict-btn").prop("disabled", false);
+  }
+});
+
+// ENTER BTN
 $("#enter-btn").click(function () {
-  toggleLoading();
+  let path = $("#url-input").val();
+  if (path.includes(" ") || !path) {
+    respond("broken-url");
+    return;
+  }
 
   $("#enter-btn").html("👌");
+  toggleLoading();
+  clearAllData();
+
   setTimeout(() => {
     $("#enter-btn").html("Enter");
   }, 1000);
 
-  $("#predicted-images-container").empty();
-  $("#selected-image-container").empty();
-  $("#prediction-probability").empty();
-
-  let path = $("#url-input").val();
   $("#selected-image-container").append(
     `<img id="selected-image" src="${path}" crossorigin="anonymous" alt="">`
   );
@@ -126,20 +167,24 @@ async function analyzeImg() {
       })
       .slice(0, 1);
 
-    let category = match[0].className;
-    let probability = match[0].probability.toFixed(6);
+    let item = match[0].className;
+    const { tag, name, style, release } = item;
+    let percentage = match[0].probability.toFixed(2) * 100;
 
-    $("#prediction-probability").html(`${category} Probability: ${probability}`);
-
+    $(".key").removeClass("hide");
+    $("#percentage-accuracy").html(`Percentage Accuracy: ${percentage}%`);
+    $("#name").html(name);
+    $("#style").html(style);
+    $("#release").html(release);
     $.ajax({
-      url: `/images/${category}`,
+      url: `/data/${tag}`,
       success: function (data) {
         $(data)
           .find("a")
           .attr("href", function (i, val) {
             if (val.match(/\.(jpe?g)$/)) {
               $("#predicted-images-container").append(
-                `<img id="predicted-image" src="${val}" class='ml-3' crossorigin='anonymous' alt='' >`
+                `<img id="predicted-image" src="${val}" crossorigin='anonymous' alt='' >`
               );
             }
           });
@@ -169,6 +214,6 @@ $("#predict-btn").click(function () {
   } else if (!newImg && !brokenImg) {
     respond("double-clicked-predict");
   } else {
-    respond("no-upload-image");
+    respond("no-selected-image");
   }
 });
