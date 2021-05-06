@@ -5,6 +5,7 @@
 // clear alll data when selected new image
 
 //load model -> show welcome ->
+
 function toggleLoading() {
   $("#res-msg").empty();
   $("#welcome-gif-container").empty();
