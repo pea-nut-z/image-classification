@@ -21,7 +21,6 @@
     width: 100% !important;
   }
   #upload-btn {
-    /* font-size: 14px !important; */
     width: 30% !important;
   }
   #url-input {
@@ -124,16 +123,24 @@ a:active {
 }
 #res-msg {
   width: 183px;
+  font-size: 17px;
 }
 
 #progress-container {
   position: absolute;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
-  width: 200px;
-  top: 12%;
-  left: 9%;
+  width: 170px;
+  height: 100px;
+  top: 15%;
+  left: 18%;
+}
+
+#progress-msg {
+  font-size: 17px;
+  padding-top: 20px;
 }
 /* UPLOAD BUTTON & INPUT */
 #btns-input-container {

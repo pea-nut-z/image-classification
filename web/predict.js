@@ -5,6 +5,7 @@
 // clear alll data when selected new image
 
 //load model -> show welcome ->
+// import $ from "jquery";
 
 function toggleLoading() {
   $("#res-msg").empty();
@@ -55,16 +56,15 @@ let newImg = false;
 let model;
 
 // FIRST LOADED
-$(document).ready(async function () {
+$(async function () {
   $("#enter-btn").prop("disabled", true);
   $("#predict-btn").prop("disabled", true);
   toggleLoading();
-  model = await tf.loadGraphModel("model/model.json");
+  model = await tf.loadGraphModel("static/model/model.json");
   toggleLoading();
   $("#welcome-gif-container").append(
-    '<img id="welcome-gif" src="images/welcome.gif" crossorigin="anonymous" alt="" >'
+    '<img id="welcome-gif" src="static/images/welcome.gif" crossorigin="anonymous" alt="" >'
   );
-  // respond("predict-error");
 });
 
 // IMAGE FILE UPLOAD
@@ -138,6 +138,7 @@ $("#enter-btn").click(function () {
   });
 
   $("#selected-image").on("error", function () {
+    // $("#predicted-images-container").empty();
     respond("broken-url");
   });
 });
